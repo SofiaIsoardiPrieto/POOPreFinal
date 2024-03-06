@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace POOPreFinal.Consola
 {
-    internal class CajaDeAhorroDolares : Cuenta
+    public class CajaDeAhorroDolares : Cuenta
     {
         public CajaDeAhorroDolares(int numeroCta, string titularCta) : base(numeroCta, titularCta)
         {
@@ -17,7 +17,6 @@ namespace POOPreFinal.Consola
             if (monto>=200)
             {
                 Saldo += 200;
-
             }
             else
             {

@@ -1,1 +1,5 @@
-﻿
+CajaDeAhorro,1,Juan,9000
+CuentaCorriente,2,Maria,100
+CajaDeAhorroDolares,3,Pedro,200
+CuentaCorriente,5,Brandy,100
+CajaDeAhorroDolares,6,Petrus,100

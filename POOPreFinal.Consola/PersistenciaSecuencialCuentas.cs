@@ -8,12 +8,12 @@ namespace POOPreFinal.Consola
     {
         private string path = Environment.CurrentDirectory;
         private string archivo = "Cuentas.txt";
-        private string nombreArchivo;
+        private string nombreArchivo= "C:\\_PROGRAMACION_\\2º Año\\POO\\CIMINO\\PreFinal\\POOPreFinal\\POOPreFinal.Consola\\Cuentas.txt";
 
 
         public PersistenciaSecuencialCuentas()
         {
-            nombreArchivo = Path.Combine(path, archivo);
+            //nombreArchivo = Path.Combine(path, archivo);
         }
         public List<Cuenta> Cargar()
         {
@@ -47,10 +47,10 @@ namespace POOPreFinal.Consola
                 var titular = campos[2];
                 var saldo = decimal.Parse(campos[3]);
                 var sobregiro = decimal.Parse(campos[4]);
-                cuenta = new CuentaCorriente(numero, titular,sobregiro);
+                cuenta = new CuentaCorriente(numero, titular, sobregiro);
                 cuenta.Saldo = saldo;
             }
-            else if (tipoCuenta=="CajaDeAhorro")
+            else if (tipoCuenta == "CajaDeAhorro")
             {
                 var numero = int.Parse(campos[1]);
                 var titular = campos[2];
@@ -74,14 +74,25 @@ namespace POOPreFinal.Consola
 
         public void Guardar(List<Cuenta> datos)
         {
-            using (var escritor = new StreamWriter(nombreArchivo, true))
+            try
             {
-                foreach (var cuenta in datos)
+                using (var escritor = new StreamWriter(nombreArchivo))
                 {
-                    var linea = ConstruirLinea(cuenta);
-                    escritor.WriteLine(linea);
+                    foreach (var cuenta in datos)
+                    {
+                        var linea = ConstruirLinea(cuenta);
+                        Console.WriteLine( $"escribe la linea: {linea}");
+                        escritor.WriteLine(linea);
+
+                    }
 
                 }
+
+            }
+            catch (Exception ex)
+            {
+
+                Console.WriteLine($"Error al escribir en el archivo: {ex.Message}");
             }
 
         }
@@ -90,7 +101,7 @@ namespace POOPreFinal.Consola
         {
             //tipo de cuenta, número de cuenta, titular y saldo
             //nesesito el sobregiro en CuentaCorriente
-            if (cuenta.GetType()==typeof(CuentaCorriente))
+            if (cuenta.GetType() == typeof(CuentaCorriente))
             {
                 return $"{cuenta.GetType().Name},{cuenta.Numero},{cuenta.Titular},{((CuentaCorriente)cuenta).Sobregiro}";
             }

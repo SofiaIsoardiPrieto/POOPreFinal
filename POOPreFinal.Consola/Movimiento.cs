@@ -7,17 +7,29 @@ using System.Threading.Tasks;
 
 namespace POOPreFinal.Consola
 {
+    public enum TipoOperacion
+    {
+        Deposito,
+        Retiro
+    }
     public class Movimiento
     {
-        public Movimiento(int numeroDeCuenta, string tipoDeMovimiento, decimal monto)
-        {
-            this.numeroDeCuenta = numeroDeCuenta;
-            TipoDeMovimiento = tipoDeMovimiento;
-            Monto = monto;
-        }
 
-        public int numeroDeCuenta { get; set; }
-        public string TipoDeMovimiento { get; set; }
+        public string Descripcion { get; set; }
+        public DateTime FechaHora { get; set; }
         public decimal Monto { get; set; }
+        public int NumeroCuenta { get; set; }
+        public TipoOperacion  Operacion { get; set; }
+
+        public Movimiento( TipoOperacion operacion, int numeroCuenta , decimal monto,string descripcion)
+        {
+            Descripcion = descripcion;
+            FechaHora = DateTime.Now;
+            Monto = monto;
+            NumeroCuenta = numeroCuenta;
+            Operacion = operacion;
+        }
+        public override string ToString() => 
+            $"Cuenta N°:{NumeroCuenta}, tipo de operación: {Operacion}, monto: {Monto}. {Descripcion}";
     }
 }

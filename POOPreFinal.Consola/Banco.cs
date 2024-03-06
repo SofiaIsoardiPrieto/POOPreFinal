@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace POOPreFinal.Consola
@@ -9,10 +8,13 @@ namespace POOPreFinal.Consola
     {
 
         private List<Cuenta> cuentas = new List<Cuenta>();
-        private List<Movimiento> movimientos = new List<Movimiento>();
+        private List<Movimiento> movimientos;
+
+        public List<Movimiento> Movimientos => movimientos;
+
         private string nombre;
 
-        public List<Movimiento> Movimientos { get; }
+
 
         public void AgregarCuenta(Cuenta cuenta)
         {
@@ -26,10 +28,10 @@ namespace POOPreFinal.Consola
 
         private Banco()
         {
-
+            movimientos = new List<Movimiento>();
         }
 
-        public Banco(string nombreEntidad)
+        public Banco(string nombreEntidad) : this()
         {
             nombre = nombreEntidad;
         }
@@ -38,7 +40,7 @@ namespace POOPreFinal.Consola
         {
             foreach (var item in cuentas)
             {
-                if (item.Numero==numeroCuenta)
+                if (item.Numero == numeroCuenta)
                 {
                     return item;
                 }
@@ -55,21 +57,22 @@ namespace POOPreFinal.Consola
         public void Depositar(int numeroCuenta, decimal monto)
         {
             var cuenta = BuscarCuenta(numeroCuenta);
-           
+
             if (!(cuenta is null))
             {
-                if (cuenta.GetType()==typeof( CajaDeAhorroDolares))
+                if (cuenta.GetType() == typeof(CajaDeAhorroDolares))
                 {
                     ((CajaDeAhorroDolares)cuenta).Depositar(monto);
+                    AgregarMovimiento(new Movimiento(TipoOperacion.Deposito, numeroCuenta, monto, "OK"));
                 }
                 else
                 {
-                    cuenta.Saldo += monto; 
-                    AgregarMovimiento(new Movimiento(numeroCuenta, "deposito", monto));
+                    cuenta.Saldo += monto;
+                    AgregarMovimiento(new Movimiento(TipoOperacion.Deposito, numeroCuenta, monto, "OK"));
                 }
- 
+
             }
-            
+
         }
 
         public override bool Equals(object obj)
@@ -85,7 +88,7 @@ namespace POOPreFinal.Consola
 
         public static string operator +(Banco banco, Cuenta cuenta)
         {
-            if (banco!=cuenta)
+            if (banco != cuenta)
             {
                 banco.AgregarCuenta(cuenta);
                 return $"Cuenta n: {cuenta} agregada exitosamente";
@@ -96,7 +99,7 @@ namespace POOPreFinal.Consola
         {
             foreach (var item in banco.cuentas)
             {
-                if (item==cuenta)
+                if (item == cuenta)
                 {
                     return true;
                 }
@@ -123,26 +126,46 @@ namespace POOPreFinal.Consola
             var cuenta = BuscarCuenta(numeroDeCuenta);
             if (!(cuenta is null))
             {
-                if (cuenta.GetType()==typeof(CuentaCorriente))
+
+
+                if (cuenta.GetType() == typeof(CuentaCorriente))
                 {
-                   ((CuentaCorriente) cuenta).Retirar(monto);
-                    
+                    if (((CuentaCorriente)cuenta).Retirar(monto))
+                    {
+                        AgregarMovimiento(new Movimiento(TipoOperacion.Retiro, numeroDeCuenta, monto, "OK"));
+                    }
+                    AgregarMovimiento(new Movimiento(TipoOperacion.Retiro, numeroDeCuenta, monto, "Monto de sobregiro superado"));
                 }
                 else if (cuenta.GetType() == typeof(CajaDeAhorro))
                 {
-                    ((CajaDeAhorro)cuenta).Retirar(monto);
-
+                    if (((CajaDeAhorro)cuenta).Retirar(monto))
+                    {
+                        AgregarMovimiento(new Movimiento(TipoOperacion.Retiro, numeroDeCuenta, monto, "OK"));
+                    }
+                    AgregarMovimiento(new Movimiento(TipoOperacion.Retiro, numeroDeCuenta, monto, "Fondos insuficientes"));
                 }
                 else
                 {
-                    ((CajaDeAhorroDolares)cuenta).Retirar(monto);
+                    if (((CajaDeAhorroDolares)cuenta).Retirar(monto))
+                    {
+                        AgregarMovimiento(new Movimiento(TipoOperacion.Retiro, numeroDeCuenta, monto, "OK"));
+                    }
+                    AgregarMovimiento(new Movimiento(TipoOperacion.Retiro, numeroDeCuenta, monto, "Fondos en dólares insuficientes"));
+
+                }
+                if (cuenta.Suspendida)
+                {
+                    AgregarMovimiento(new Movimiento(TipoOperacion.Retiro, numeroDeCuenta, monto, "Cuenta Suspendida"));
+
                 }
                 
             }
             else
             {
-               Console.WriteLine("La cuenta no existe.");
+                Console.WriteLine("La cuenta no existe.");
+                AgregarMovimiento(new Movimiento(TipoOperacion.Retiro, numeroDeCuenta, monto, "Cuenta no existe"));
             }
+
         }
 
         public void GuardarCuentas()

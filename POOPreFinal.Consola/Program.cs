@@ -40,6 +40,14 @@ namespace POOPreFinal.Consola
             Console.WriteLine((string)banco);//Controlar que los saldos sean los esperados
             //Persistir los datos
             banco.GuardarCuentas();
+            var listaDeMoviemintos = banco.Movimientos;
+
+
+            foreach (var movimiento in listaDeMoviemintos)
+            {
+                Console.WriteLine(movimiento.ToString());
+            }
+
 
 
             Console.ReadLine();
