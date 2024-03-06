@@ -58,9 +58,18 @@ namespace POOPreFinal.Consola
            
             if (!(cuenta is null))
             {
-                cuenta.Saldo += monto;
-                AgregarMovimiento(new Movimiento(numeroCuenta, "deposito", monto));
+                if (cuenta.GetType()==typeof( CajaDeAhorroDolares))
+                {
+                    ((CajaDeAhorroDolares)cuenta).Depositar(monto);
+                }
+                else
+                {
+                    cuenta.Saldo += monto; 
+                    AgregarMovimiento(new Movimiento(numeroCuenta, "deposito", monto));
+                }
+ 
             }
+            
         }
 
         public override bool Equals(object obj)
@@ -74,31 +83,29 @@ namespace POOPreFinal.Consola
             return banco.nombre == ((Banco)obj).nombre;
         }
 
-        public static bool operator +(Banco banco, Cuenta cuenta)
+        public static string operator +(Banco banco, Cuenta cuenta)
         {
-            if (!banco.cuentas.Contains(cuenta))
+            if (banco!=cuenta)
             {
                 banco.AgregarCuenta(cuenta);
-                return true;
+                return $"Cuenta n: {cuenta} agregada exitosamente";
             }
-            return false;
+            return $"La cuenta n: {cuenta} ya existe";
         }
         public static bool operator ==(Banco banco, Cuenta cuenta)
         {
-            if (banco.cuentas.Contains(cuenta))
+            foreach (var item in banco.cuentas)
             {
-                return true;
+                if (item==cuenta)
+                {
+                    return true;
+                }
             }
             return false;
         }
         public static bool operator !=(Banco banco, Cuenta cuenta)
         {
-            if (!banco.cuentas.Contains(cuenta))
-            {
-                banco.AgregarCuenta(cuenta);
-                return true;
-            }
-            return false;
+            return !(banco == cuenta);
         }
         public static explicit operator string(Banco v)
         {
@@ -106,7 +113,7 @@ namespace POOPreFinal.Consola
             sb.AppendLine($" Banco:{v.nombre}");
             foreach (var item in v.cuentas)
             {
-                sb.AppendLine($"Cuenta:{item.Numero}");
+                sb.AppendLine($"Cuenta:{item.Numero} - {item.Saldo} - {item.Suspendida}");
             }
             return sb.ToString();
         }
@@ -116,15 +123,21 @@ namespace POOPreFinal.Consola
             var cuenta = BuscarCuenta(numeroDeCuenta);
             if (!(cuenta is null))
             {
-                if (cuenta.Saldo >= monto)
+                if (cuenta.GetType()==typeof(CuentaCorriente))
                 {
-                    cuenta.Saldo -= monto;
-                    AgregarMovimiento(new Movimiento(numeroDeCuenta, "Retiro", -monto));
+                   ((CuentaCorriente) cuenta).Retirar(monto);
+                    
+                }
+                else if (cuenta.GetType() == typeof(CajaDeAhorro))
+                {
+                    ((CajaDeAhorro)cuenta).Retirar(monto);
+
                 }
                 else
                 {
-                    Console.WriteLine("Fondos insuficientes para realizar el retiro.");
+                    ((CajaDeAhorroDolares)cuenta).Retirar(monto);
                 }
+                
             }
             else
             {

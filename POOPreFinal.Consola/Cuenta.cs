@@ -5,17 +5,32 @@ namespace POOPreFinal.Consola
     public abstract class Cuenta
     {
         private int numero;
-        private bool suspendida;
+
+        public int Numero
+        {
+            get { return numero; }
+            
+        }
         private string titular;
-        public int Numero { get; }
-        public string Titular { get; }
-        public bool Suspendida { get; set; }
+
+        public string Titular
+        {
+            get { return titular; }
+        }
+        private bool suspendida;
+
+        public bool Suspendida
+        {
+            get { return suspendida; }
+            set { suspendida = value; }
+        }
+      
         public decimal Saldo { get; set; }
 
         public Cuenta(int numeroCta, string titularCta)
         {
-            Numero = numeroCta;
-            Titular = titularCta;
+            numero = numeroCta;
+            titular = titularCta;
             suspendida = false;
             Saldo = 0;
         }
@@ -24,12 +39,18 @@ namespace POOPreFinal.Consola
 
         public override bool Equals(object obj)
         {
-            if (obj == null && !(obj is Cuenta))
+            if (obj is Cuenta cuenta)
             {
-                return false;
+                return int.Equals(numero, cuenta.numero);
             }
-            Cuenta cuenta = (Cuenta)obj;
-            return cuenta.numero == ((Cuenta)obj).numero;
+            return false;
+
+            //if (obj == null && !(obj is Cuenta))
+            //{
+            //    return false;
+            //}
+            //Cuenta cuenta = (Cuenta)obj;
+            //return cuenta.numero == ((Cuenta)obj).numero;
         }
 
         public override int GetHashCode()
@@ -56,7 +77,8 @@ namespace POOPreFinal.Consola
 
         public override string ToString()
         {
-            return $"La cuenta: {numero}, del tutilar: {titular}, en estado de:{suspendida}, con un saldo de {Saldo}";
+            return $"La cuenta: {Numero}, del tutilar: {Titular}," +
+                $" en estado de suspensión:{Suspendida}, con un saldo de {Saldo}";
         }
     }
 

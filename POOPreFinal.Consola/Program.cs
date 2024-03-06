@@ -40,6 +40,9 @@ namespace POOPreFinal.Consola
             Console.WriteLine((string)banco);//Controlar que los saldos sean los esperados
             //Persistir los datos
             banco.GuardarCuentas();
+
+
+            Console.ReadLine();
         }
     }
 }
